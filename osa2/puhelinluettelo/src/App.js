@@ -1,6 +1,18 @@
 import React, { useState, useEffect } from 'react'
 import personService from './services/persons'
 
+const Notification = ({message, type}) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className={type==='error' ? 'error' : 'notification'}>
+      {message}
+    </div>
+  )
+}
+
 const Filter = ({ filter, setFilter }) =>
 <div>
   filter shown with <input value={filter} onChange={e => setFilter(e.target.value)} />
@@ -34,6 +46,17 @@ const App = () => {
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ filter, setFilter ] = useState('')
+  const [{ message, type }, setNotification] = useState({ message: null, type: 'notification'})
+
+  const showError = message => {
+    setNotification({ message, type: 'error' })
+    setTimeout(() => setNotification({ message: null, type: 'notification' }), 5000)
+  }
+
+  const showNotification = message => {
+    setNotification({ message, type: 'notification' })
+    setTimeout(() => setNotification({ message: null, type: 'notification' }), 5000)
+  }
 
   const submitPersonForm = e => {
     e.preventDefault()
@@ -44,7 +67,9 @@ const App = () => {
             setNewName('')
             setNewNumber('')
             setPersons(persons.concat(data))
+            showNotification(`Added ${data.name}`)
           })
+          .catch(() => showError('Failed to add person'))
       } else {
         const person = persons.find(p => p.name === newName)
         personService
@@ -53,7 +78,9 @@ const App = () => {
             setNewName('')
             setNewNumber('')
             setPersons(persons.map(p => p.id === data.id ? data : p))
+            showNotification(`Updated ${data.name}`)
           })
+          .catch(() => showError('Failed to update person'))
       }
     }
   }
@@ -62,16 +89,23 @@ const App = () => {
     if (window.confirm(`Delete ${person.name}?`)) {
       personService
         .destroy(person.id)
-        .then(() => setPersons(persons.filter(p => p.id !== person.id)))
+        .then(() => {
+          setPersons(persons.filter(p => p.id !== person.id))
+          showNotification(`Deleted ${person.name}`)
+        })
+        .catch(() => showError('Failed to delete person'))
     }
   }
 
   useEffect(() => {
-    personService.getAll().then(data => setPersons(data))
+    personService.getAll()
+      .then(data => setPersons(data))
+      .catch(() => showError('Failed to fetch persons'))
   }, [])
 
   return (
     <div>
+      <Notification message={message} type={type} />
       <h2>Phonebook</h2>
       <Filter filter={filter} setFilter={setFilter} />
       <h2>Add a new</h2>
