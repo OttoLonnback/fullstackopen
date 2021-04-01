@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
 
 const Filter = ({ filter, setFilter }) =>
 <div>
@@ -21,13 +22,11 @@ const Person = ({ name, number }) => <p>{name} {number}</p>
 
 const Persons = ({ persons, filter }) => persons
   .filter(p => p.name.toLowerCase().startsWith(filter.toLowerCase()))
-  .map(p => <Person name={p.name} number={p.number} />)
+  .map(p => <Person name={p.name} number={p.number} key={p.id} />)
 
 
 const App = () => {
-  const [ persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-1231244' }
-  ]) 
+  const [ persons, setPersons] = useState([]) 
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ filter, setFilter ] = useState('')
@@ -44,6 +43,12 @@ const App = () => {
       }
     }
   }
+
+  useEffect(() => {
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => setPersons(response.data))
+  }, [])
 
   return (
     <div>
