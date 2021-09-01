@@ -69,7 +69,7 @@ const App = () => {
             setPersons(persons.concat(data))
             showNotification(`Added ${data.name}`)
           })
-          .catch(() => showError('Failed to add person'))
+          .catch(e => showError(e.response.data.error))
       } else {
         const person = persons.find(p => p.name === newName)
         personService

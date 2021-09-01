@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
 function setupDB (password) {
   const url =
@@ -15,7 +15,7 @@ function setupDB (password) {
 }
 
 if (process.argv.length === 3) {
-  const Person = setupDB(process.argv[2]);
+  const Person = setupDB(process.argv[2])
 
   Person.find({}).then(result => {
     console.log('phonebook:')
@@ -26,7 +26,7 @@ if (process.argv.length === 3) {
   })
 
 } else if (process.argv.length === 5) {
-  const Person = setupDB(process.argv[2]);
+  const Person = setupDB(process.argv[2])
 
   const person = new Person({ name: process.argv[3], number: process.argv[4] })
   
