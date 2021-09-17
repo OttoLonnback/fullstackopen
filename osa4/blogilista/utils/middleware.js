@@ -2,7 +2,6 @@ const logger = require('./logger')
 const jwt = require('jsonwebtoken')
 const config  =require('./config')
 const User = require('../models/user')
-const user = require('../models/user')
 
 const requestLogger = (request, response, next) => {
   const bodyCopy = { ... request.body }
