@@ -35,9 +35,6 @@ blogsRouter.put('/:id', async (request, response) => {
   if (!blog) {
     return response.status(401).json({ error: 'blog does not exist' })
   }
-  if (request.user._id.toString() !== blog.user.toString()) {
-    return response.status(401).json({ error: 'only own blogs can be modified' })
-  }
 
   const result = await Blog
     .findByIdAndUpdate(request.params.id, request.body, { new: true })
